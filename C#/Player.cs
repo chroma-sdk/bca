@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -168,9 +170,11 @@ namespace BCA
 
         public void LoadAnimation(string filepath)
         {
-            var fs = new System.IO.FileStream(filepath, System.IO.FileMode.Open);
-            LoadAnimation(fs);
-            fs.Close();
+            using (Stream fileStream = File.OpenRead(filepath),
+              zippedStream = new GZipStream(fileStream, CompressionMode.Decompress))
+            {
+                LoadAnimation(zippedStream);
+            }
         }
         public void LoadAnimation(System.IO.Stream s)
         {
